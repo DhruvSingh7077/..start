@@ -1,6 +1,6 @@
 // src/server.ts
 // Purpose: Main Express server - ties everything together
-
+import path from 'path';
 import express, { Express } from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
@@ -23,7 +23,10 @@ import healthRouter from './routes/health';
  */
 export function createApp(): Express {
   const app = express();
-  
+  app.use(express.static(path.join(__dirname, '..', 'dashboard', 'dist')));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'dashboard', 'dist', 'index.html'));
+});
   // Middleware - applied in order
   app.use(cors()); // Enable CORS
   app.use(express.json({ limit: '10mb' })); // Parse JSON bodies

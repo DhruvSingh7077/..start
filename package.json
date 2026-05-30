@@ -4,6 +4,7 @@
   "description": "Lightweight API Gateway with intelligent rate limiting and AI cost control",
   "main": "dist/index.js",
   "scripts": {
+    "prebuild": "cd dashboard && npm install && npm run build",
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
