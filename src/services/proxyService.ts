@@ -1,7 +1,7 @@
 // src/services/proxyService.ts
 // Purpose: Forward requests to backend AI APIs (OpenAI, Anthropic)
 
-import fetch from 'node-fetch';
+
 import { config } from '../config/environment';
 import { logger } from '../utils/logger';
 import { getMockResponse } from './mockBackend';
@@ -146,7 +146,7 @@ export async function forwardRequest(request: ProxyRequest): Promise<ProxyRespon
     
     // Extract response headers
     const responseHeaders: Record<string, any> = {};
-    response.headers.forEach((value, key) => {
+response.headers.forEach((value: string, key: string) => {
       responseHeaders[key] = value;
     });
     
