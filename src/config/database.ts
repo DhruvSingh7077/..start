@@ -112,3 +112,53 @@ export async function getTableCount(tableName: string): Promise<number> {
   const result = await query(`SELECT COUNT(*) as count FROM ${tableName}`);
   return parseInt(result.rows[0].count, 10);
 }
+
+// Auto-migrate: create tables if they don't exist
+export async function runMigrations(): Promise<void> {
+  console.log('Running database migrations...');
+  
+  await query(`
+    CREATE TABLE IF NOT EXISTS api_keys (
+      id SERIAL PRIMARY KEY,
+      key VARCHAR(255) UNIQUE NOT NULL,
+      user_id VARCHAR(255) NOT NULL,
+      name VARCHAR(255),
+      rate_limit_per_minute INTEGER DEFAULT 60,
+      daily_budget_usd DECIMAL(10,4) DEFAULT 10.0,
+      is_active BOOLEAN DEFAULT true,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+
+  await query(`
+    CREATE TABLE IF NOT EXISTS requests (
+      id SERIAL PRIMARY KEY,
+      api_key_id INTEGER REFERENCES api_keys(id),
+      user_id VARCHAR(255),
+      endpoint VARCHAR(255),
+      method VARCHAR(10),
+      status_code INTEGER,
+      response_time_ms INTEGER,
+      tokens_used INTEGER DEFAULT 0,
+      cost_usd DECIMAL(10,6) DEFAULT 0,
+      model VARCHAR(255),
+      cache_hit BOOLEAN DEFAULT false,
+      created_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+
+  await query(`
+    CREATE TABLE IF NOT EXISTS daily_costs (
+      id SERIAL PRIMARY KEY,
+      user_id VARCHAR(255),
+      date DATE DEFAULT CURRENT_DATE,
+      total_cost_usd DECIMAL(10,4) DEFAULT 0,
+      total_tokens INTEGER DEFAULT 0,
+      total_requests INTEGER DEFAULT 0,
+      UNIQUE(user_id, date)
+    )
+  `);
+
+  console.log('✓ Migrations complete');
+}

@@ -6,7 +6,7 @@ import cors from 'cors';
 import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { config, validateConfig } from './config/environment';
-import { testConnection } from './config/database';
+import { testConnection ,runMigrations} from './config/database';
 import { connectRedis } from './config/redis';
 import { requestLogger, errorLogger, notFoundHandler } from './middleware/requestLogger';
 import { logger } from './utils/logger';
@@ -68,6 +68,11 @@ export async function startServer(): Promise<void> {
       throw new Error('Failed to connect to PostgreSQL');
     }
     logger.info('✓ PostgreSQL connected');
+
+    // Step 2.5: Run migrations
+    logger.info('Running migrations...');
+    await runMigrations();
+    logger.info('✓ Migrations complete');
     
     // Step 3: Connect to Redis
     logger.info('Connecting to Redis...');
