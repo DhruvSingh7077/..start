@@ -131,6 +131,8 @@ export async function runMigrations(): Promise<void> {
     )
   `);
 
+  await query(`DROP TABLE IF EXISTS requests`);
+
   await query(`
     CREATE TABLE IF NOT EXISTS requests (
       id SERIAL PRIMARY KEY,
@@ -143,8 +145,8 @@ export async function runMigrations(): Promise<void> {
       tokens_used INTEGER DEFAULT 0,
       cost_usd DECIMAL(10,6) DEFAULT 0,
       model VARCHAR(255),
-      cache_hit BOOLEAN DEFAULT false,
-      created_at TIMESTAMP DEFAULT NOW()
+      cached BOOLEAN DEFAULT false,
+      timestamp TIMESTAMP DEFAULT NOW()
     )
   `);
 
