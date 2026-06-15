@@ -3,7 +3,7 @@
 ## 🚀 Live Demo
 
 🔗 **Deployed App:**  
-http://13.51.173.101:5173/
+https://api-gateway-h1g3.onrender.com/
 
 Lightweight TypeScript API gateway for AI workloads with:
 - API key auth
